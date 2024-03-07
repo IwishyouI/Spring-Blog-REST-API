@@ -22,19 +22,8 @@ public class PostController {
 
 
     @PostMapping("/posts")
-    public Map<String,String> post(@RequestBody @Valid PostCreate postCreate,BindingResult result) {
+    public Map<String,String> post(@RequestBody @Valid PostCreate postCreate) {
         log.info(postCreate.toString());
-        if (result.hasErrors()) {
-            List<FieldError> fieldErrors = result.getFieldErrors();
-            FieldError fieldError = fieldErrors.get(0);
-            String title = fieldError.getField();
-            String message = fieldError.getDefaultMessage();
-            System.out.println(title+ " " + message);
-
-            Map<String , String> errors = new HashMap<>();
-            errors.put(title,message);
-            return errors;
-        }
         return Map.of();
     }
 

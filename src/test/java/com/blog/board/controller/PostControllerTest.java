@@ -26,9 +26,9 @@ public class PostControllerTest {
     void test() throws Exception {
 
         mockMvc.perform(post("/posts").contentType(MediaType.APPLICATION_JSON).content("{\"title\":\"\",\"content\":\"내용입니다.\" }"))
-                .andExpect(status().isOk())
+                .andExpect(status().isBadRequest())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.title",is("must not be blank")))
+                .andExpect(jsonPath("$.validation.title",is("must not be blank")))
                 .andDo(print());
 
     }
