@@ -24,9 +24,7 @@ public class PostControllerTest {
     @Test
     void test() throws Exception {
 
-        mockMvc.perform(get("/posts").contentType(MediaType.APPLICATION_JSON)
-                        .param("title", "안녕하세요")
-                        .param("content", "내용입니다"))
+        mockMvc.perform(get("/posts").contentType(MediaType.APPLICATION_JSON).content("{\"title\" : \"\",\"content\" : \"내용입니다.\" }"))
                 .andExpect(status().isOk())
                 .andExpect(content().string("Hello World"))
                 .andDo(print());
