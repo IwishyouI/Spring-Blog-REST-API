@@ -1,16 +1,14 @@
 package com.blog.board.request;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 
-@Getter
 public class PostCreate {
 
 
     @NotBlank
     private String title;
-    @NotNull
+    @NotBlank
     private String content;
 
 
@@ -20,6 +18,14 @@ public class PostCreate {
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public String getContent() {
+        return content;
     }
 
     @Override
