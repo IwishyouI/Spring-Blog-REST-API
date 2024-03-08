@@ -1,5 +1,7 @@
 package com.blog.board.controller;
 
+import lombok.Builder;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -9,6 +11,11 @@ public class ErrorResponse {
     private String message;
     private Map<String, String> validation = new HashMap<>();
 
+
+    public ErrorResponse() {
+    }
+
+    @Builder
     public ErrorResponse(String code, String message) {
         this.code = code;
         this.message = message;

@@ -1,6 +1,8 @@
 package com.blog.board.controller;
 
+import com.blog.board.domain.Post;
 import com.blog.board.repository.PostRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -25,6 +27,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class PostControllerTest {
 
 
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @Autowired
     private MockMvc mockMvc;
@@ -40,11 +44,12 @@ public class PostControllerTest {
 
     @Test
     void test() throws Exception {
-
-        mockMvc.perform(post("/posts").contentType(MediaType.APPLICATION_JSON).content("{\"title\":\"\",\"content\":\"내용입니다.\" }"))
+        Post post = new Post().builder().content("내용입니다.").build();
+        String content = objectMapper.writeValueAsString(post);
+        mockMvc.perform(post("/posts").contentType(MediaType.APPLICATION_JSON).content(content))
                 .andExpect(status().isBadRequest())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.validation.title",is("must not be blank")))
+                .andExpect(jsonPath("$.validation.title", is("must not be blank")))
                 .andDo(print());
 
     }
@@ -52,8 +57,14 @@ public class PostControllerTest {
     @Test
     @DisplayName("게시글 저장 테스트")
     void test2() throws Exception {
+        Post post = new Post()
+                .builder()
+                .title("제목입니다.")
+                .content("내용입니다.")
+                .build();
 
-        mockMvc.perform(post("/posts").contentType(MediaType.APPLICATION_JSON).content("{\"title\":\"제목입니다.\",\"content\":\"내용입니다.\" }"))
+        String content = objectMapper.writeValueAsString(post);
+        mockMvc.perform(post("/posts").contentType(MediaType.APPLICATION_JSON).content(content))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andDo(print());
@@ -66,11 +77,11 @@ public class PostControllerTest {
     @Test
     @DisplayName("게시글 저장 테스트2")
     void test3() throws Exception {
-
-        mockMvc.perform(post("/posts").contentType(MediaType.APPLICATION_JSON).content("{\"title\":\"제목입니다.\",\"content\":\"내용입니다.\" }"))
+        Post post = new Post("제목입니다.", "내용입니다.");
+        String content = objectMapper.writeValueAsString(post);
+        mockMvc.perform(post("/posts").contentType(MediaType.APPLICATION_JSON).content(content))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.title").value("제목입니다."))
                 .andDo(print());
 
 
