@@ -2,6 +2,7 @@ package com.blog.board.controller;
 
 import com.blog.board.domain.Post;
 import com.blog.board.repository.PostRepository;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -66,7 +67,6 @@ public class PostControllerTest {
         String content = objectMapper.writeValueAsString(post);
         mockMvc.perform(post("/posts").contentType(MediaType.APPLICATION_JSON).content(content))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andDo(print());
 
 
@@ -78,14 +78,36 @@ public class PostControllerTest {
     @DisplayName("게시글 저장 테스트2")
     void test3() throws Exception {
         Post post = new Post("제목입니다.", "내용입니다.");
+
+
         String content = objectMapper.writeValueAsString(post);
         mockMvc.perform(post("/posts").contentType(MediaType.APPLICATION_JSON).content(content))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andDo(print());
 
 
         assertThat(postRepository.count()).isEqualTo(1L);
 
+    }
+
+    @Test
+    @DisplayName("글 1개 조회")
+    void test4() throws Exception {
+
+        Post post = new Post().builder()
+                .title("foo")
+                .content("bar")
+                .build();
+
+        postRepository.save(post);
+
+
+        String body = objectMapper.writeValueAsString(post);
+        mockMvc.perform(get("/posts/{postId}", post.getId())
+                        .contentType(MediaType.APPLICATION_JSON).content(body))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.title").value("foo"))
+                .andExpect(jsonPath("$.content").value("bar"))
+                .andDo(print());
     }
 }

@@ -1,6 +1,7 @@
 package com.blog.board.controller;
 
 
+import com.blog.board.domain.Post;
 import com.blog.board.repository.PostRepository;
 import com.blog.board.request.PostCreate;
 import com.blog.board.service.PostService;
@@ -35,4 +36,8 @@ public class PostController {
         postService.write(postCreate);
     }
 
+    @GetMapping("/posts/{postId}")
+    public Post get(@PathVariable(name = "postId") Long id) {
+        return postService.get(id);
+    }
 }

@@ -1,6 +1,7 @@
 package com.blog.board.request;
 
 import jakarta.validation.constraints.NotBlank;
+import lombok.Builder;
 import lombok.Getter;
 
 public class PostCreate {
@@ -11,6 +12,15 @@ public class PostCreate {
     @NotBlank
     private String content;
 
+
+    public PostCreate() {
+    }
+
+    @Builder
+    public PostCreate(String title, String content) {
+        this.title = title;
+        this.content = content;
+    }
 
     public void setTitle(String title) {
         this.title = title;
