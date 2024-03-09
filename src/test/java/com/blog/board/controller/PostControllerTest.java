@@ -16,6 +16,8 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -108,6 +110,32 @@ public class PostControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.title").value("foo"))
                 .andExpect(jsonPath("$.content").value("bar"))
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("글 2개 조회")
+    void test5() throws Exception {
+
+        Post post = new Post().builder()
+                .title("foo")
+                .content("bar")
+                .build();
+
+
+        Post post2 = new Post().builder()
+                .title("foo")
+                .content("bar")
+                .build();
+
+        postRepository.saveAll(List.of(post,post2));
+
+
+        mockMvc.perform(get("/posts")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].id").value(4))
+                .andExpect(jsonPath("$[0].title").value("foo"))
                 .andDo(print());
     }
 }

@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -27,10 +28,10 @@ public class PostService {
 
     public PostResponse get(Long id) {
         Post post = postRepository.findById(id).orElseThrow(() ->
-            new IllegalArgumentException("존재하지 않는 글입니다.")
+                new IllegalArgumentException("존재하지 않는 글입니다.")
         );
 
-        PostResponse postResponse =PostResponse.builder()
+        PostResponse postResponse = PostResponse.builder()
                 .id(post.getId())
                 .content(post.getContent())
                 .title(post.getTitle())
@@ -38,7 +39,8 @@ public class PostService {
         return postResponse;
     }
 
-    public List<Post> getList() {
-        return postRepository.findAll();
+    public List<PostResponse> getList() {
+        return postRepository.findAll().stream().map(post ->
+                new PostResponse(post)).collect(Collectors.toList());
     }
 }

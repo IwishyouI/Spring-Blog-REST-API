@@ -29,7 +29,6 @@ class PostServiceTest {
     @BeforeEach
     void clean() {
         postRepository.deleteAll();
-
     }
 
     @Test
@@ -88,7 +87,7 @@ class PostServiceTest {
 
         postRepository.save(requestPost2);
 
-        List<Post> list = postService.getList();
+        List<PostResponse> list = postService.getList();
 
         assertEquals(2L,postRepository.count());
     }
