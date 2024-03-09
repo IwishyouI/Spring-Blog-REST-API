@@ -1,4 +1,4 @@
-package com.blog.board.controller;
+package com.blog.board.response;
 
 import lombok.Builder;
 

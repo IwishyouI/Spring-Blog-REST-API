@@ -4,6 +4,7 @@ package com.blog.board.controller;
 import com.blog.board.domain.Post;
 import com.blog.board.repository.PostRepository;
 import com.blog.board.request.PostCreate;
+import com.blog.board.response.PostResponse;
 import com.blog.board.service.PostService;
 import jakarta.validation.Valid;
 import lombok.extern.log4j.Log4j2;
@@ -37,7 +38,12 @@ public class PostController {
     }
 
     @GetMapping("/posts/{postId}")
-    public Post get(@PathVariable(name = "postId") Long id) {
+    public PostResponse get(@PathVariable(name = "postId") Long id) {
         return postService.get(id);
+    }
+
+    @GetMapping("/posts")
+    public List<Post> getList() {
+         return postService.getList();
     }
 }

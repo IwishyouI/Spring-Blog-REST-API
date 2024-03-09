@@ -3,11 +3,14 @@ package com.blog.board.service;
 import com.blog.board.domain.Post;
 import com.blog.board.repository.PostRepository;
 import com.blog.board.request.PostCreate;
+import com.blog.board.response.PostResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -60,11 +63,33 @@ class PostServiceTest {
 
         postRepository.save(requestPost);
 
-        Post post = postService.get(requestPost.getId());
+        PostResponse post = postService.get(requestPost.getId());
 
         assertEquals("foo",post.getTitle());
         assertEquals("bar",post.getContent());
 
         assertEquals(1L,postRepository.count());
+    }
+
+    @Test
+    @DisplayName("다건 조회")
+    void test3() {
+
+        Post requestPost = Post.builder()
+                .title("foo")
+                .content("bar")
+                .build();
+        postRepository.save(requestPost);
+        Post requestPost2 = Post.builder()
+                .title("foo")
+                .content("bar")
+                .build();
+
+
+        postRepository.save(requestPost2);
+
+        List<Post> list = postService.getList();
+
+        assertEquals(2L,postRepository.count());
     }
 }
