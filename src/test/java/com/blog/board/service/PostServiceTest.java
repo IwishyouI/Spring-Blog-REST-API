@@ -99,6 +99,6 @@ class PostServiceTest {
         List<PostResponse> posts = postService.getList(postSearch);
 
         assertThat(postRepository.count()).isEqualTo(30L);
-        assertThat(posts.get(0).getTitle()).isEqualTo("foo25");
+        assertThat(posts.get(0).getTitle()).isEqualTo("foo30");
     }
 }

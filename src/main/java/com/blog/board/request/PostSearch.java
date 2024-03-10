@@ -3,16 +3,23 @@ package com.blog.board.request;
 
 import lombok.Builder;
 
+@Builder
 public class PostSearch {
 
-    private int page;
-    private int size;
 
+    @Builder.Default
+    private Integer page = 1;
+    @Builder.Default
+    private Integer size = 10;
+
+
+    public long getOffSet() {
+        return (long) (Math.max(1, page) - 1) * Math.min(size, 2000);
+    }
     public PostSearch() {
     }
 
-    @Builder
-    public PostSearch(int page, int size) {
+    public PostSearch(Integer page, Integer size) {
         this.page = page;
         this.size = size;
     }

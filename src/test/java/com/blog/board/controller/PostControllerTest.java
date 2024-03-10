@@ -2,6 +2,7 @@ package com.blog.board.controller;
 
 import com.blog.board.domain.Post;
 import com.blog.board.repository.PostRepository;
+import com.blog.board.request.PostSearch;
 import com.blog.board.response.PostResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -137,7 +138,7 @@ public class PostControllerTest {
         postRepository.saveAll(List.of(post,post2));
 
 
-        mockMvc.perform(get("/posts")
+        mockMvc.perform(get("/posts?page=0&sort=id,desc&size=5")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].id").value(4))
@@ -159,9 +160,36 @@ public class PostControllerTest {
 
         postRepository.saveAll(requestposts);
 
-        mockMvc.perform(get("/posts?page=0&sort=id,desc&size=5")
+
+        mockMvc.perform(get("/posts?page=1&size=5")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(5))
+                .andExpect(jsonPath("$[0].id").value(30))
+                .andDo(print());
+
+    }
+
+
+    @Test
+    @DisplayName("페이징 0일 때 어떻게 될까요")
+    void test7() throws Exception {
+
+        List<Post> requestposts = IntStream.range(1,31)
+                .mapToObj(i->
+                        new Post().builder().title("foo" + i)
+                                .content("bar" + i)
+                                .build())
+                .collect(Collectors.toList());
+
+        postRepository.saveAll(requestposts);
+
+
+        mockMvc.perform(get("/posts?page=0&size=5")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(5))
+                .andExpect(jsonPath("$[0].id").value(30))
                 .andDo(print());
 
     }

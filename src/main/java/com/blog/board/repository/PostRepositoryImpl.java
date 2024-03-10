@@ -22,7 +22,7 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
     @Override
     public List<Post> getList(PostSearch postSearch) {
         return jpaQueryFactory.selectFrom(post)
-                .limit(postSearch.getSize()).offset((postSearch.getPage() - 1) * postSearch.getSize())
+                .limit(postSearch.getSize()).offset(postSearch.getOffSet())
                 .orderBy(post.id.desc())
                 .fetch();
     }
