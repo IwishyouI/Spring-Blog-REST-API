@@ -10,6 +10,8 @@ import jakarta.validation.Valid;
 import lombok.extern.log4j.Log4j2;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.annotation.Validated;
@@ -43,7 +45,7 @@ public class PostController {
     }
 
     @GetMapping("/posts")
-    public List<PostResponse> getList() {
-         return postService.getList();
+    public List<PostResponse> getList(Pageable pageable) {
+         return postService.getList(pageable);
     }
 }

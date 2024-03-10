@@ -6,7 +6,11 @@ import com.blog.board.repository.PostRepository;
 import com.blog.board.request.PostCreate;
 import com.blog.board.response.PostResponse;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.query.Page;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -39,8 +43,8 @@ public class PostService {
         return postResponse;
     }
 
-    public List<PostResponse> getList() {
-        return postRepository.findAll().stream().map(post ->
+    public List<PostResponse> getList(Pageable pageable) {
+        return postRepository.findAll(pageable).stream().map(post ->
                 new PostResponse(post)).collect(Collectors.toList());
     }
 }

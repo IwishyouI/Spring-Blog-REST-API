@@ -2,6 +2,7 @@ package com.blog.board.controller;
 
 import com.blog.board.domain.Post;
 import com.blog.board.repository.PostRepository;
+import com.blog.board.response.PostResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,11 +13,16 @@ import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -137,5 +143,26 @@ public class PostControllerTest {
                 .andExpect(jsonPath("$[0].id").value(4))
                 .andExpect(jsonPath("$[0].title").value("foo"))
                 .andDo(print());
+    }
+
+
+    @Test
+    @DisplayName("페이징 테스트")
+    void test6() throws Exception {
+
+        List<Post> requestposts = IntStream.range(1,31)
+                .mapToObj(i->
+                        new Post().builder().title("foo" + i)
+                                .content("bar" + i)
+                                .build())
+                .collect(Collectors.toList());
+
+        postRepository.saveAll(requestposts);
+
+        mockMvc.perform(get("/posts?page=0&sort=id,desc&size=5")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andDo(print());
+
     }
 }
