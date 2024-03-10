@@ -3,6 +3,7 @@ package com.blog.board.service;
 import com.blog.board.domain.Post;
 import com.blog.board.repository.PostRepository;
 import com.blog.board.request.PostCreate;
+import com.blog.board.request.PostSearch;
 import com.blog.board.response.PostResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -88,8 +89,14 @@ class PostServiceTest {
                 .collect(Collectors.toList());
 
         postRepository.saveAll(requestposts);
-        Pageable pageable = PageRequest.of(0, 5, Sort.by(Sort.Direction.DESC, "id"));
-        List<PostResponse> posts = postService.getList(pageable);
+
+        PostSearch postSearch = new PostSearch()
+                .builder()
+                .page(1)
+                .size(10)
+                .build();
+
+        List<PostResponse> posts = postService.getList(postSearch);
 
         assertThat(postRepository.count()).isEqualTo(30L);
         assertThat(posts.get(0).getTitle()).isEqualTo("foo25");

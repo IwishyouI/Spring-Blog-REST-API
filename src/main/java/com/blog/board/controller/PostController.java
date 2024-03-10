@@ -4,6 +4,7 @@ package com.blog.board.controller;
 import com.blog.board.domain.Post;
 import com.blog.board.repository.PostRepository;
 import com.blog.board.request.PostCreate;
+import com.blog.board.request.PostSearch;
 import com.blog.board.response.PostResponse;
 import com.blog.board.service.PostService;
 import jakarta.validation.Valid;
@@ -45,7 +46,7 @@ public class PostController {
     }
 
     @GetMapping("/posts")
-    public List<PostResponse> getList(Pageable pageable) {
-         return postService.getList(pageable);
+    public List<PostResponse> getList(@RequestParam PostSearch postSearch) {
+         return postService.getList(postSearch);
     }
 }
