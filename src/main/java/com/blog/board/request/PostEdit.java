@@ -1,0 +1,30 @@
+package com.blog.board.request;
+
+
+import jakarta.validation.constraints.NotBlank;
+import lombok.Builder;
+import lombok.Data;
+
+@Data
+public class PostEdit {
+
+    @NotBlank(message = "타이틀을 입력하세요")
+    private String title;
+
+    @NotBlank(message = "콘텐츠를 입력하세요")
+    private String content;
+
+
+    @Builder
+    public PostEdit(String title, String content) {
+        this.title = title;
+        this.content = content;
+    }
+
+    public void change(String title, String content) {
+        this.title = title;
+        this.content = content;
+    }
+
+
+}

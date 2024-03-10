@@ -49,4 +49,5 @@ public class PostController {
     public List<PostResponse> getList(@ModelAttribute PostSearch postSearch) {
          return postService.getList(postSearch);
     }
+
 }

@@ -3,6 +3,7 @@ package com.blog.board.service;
 import com.blog.board.domain.Post;
 import com.blog.board.repository.PostRepository;
 import com.blog.board.request.PostCreate;
+import com.blog.board.request.PostEdit;
 import com.blog.board.request.PostSearch;
 import com.blog.board.response.PostResponse;
 import org.junit.jupiter.api.BeforeEach;
@@ -71,21 +72,21 @@ class PostServiceTest {
 
         PostResponse post = postService.get(requestPost.getId());
 
-        assertEquals("foo",post.getTitle());
-        assertEquals("bar",post.getContent());
+        assertEquals("foo", post.getTitle());
+        assertEquals("bar", post.getContent());
 
-        assertEquals(1L,postRepository.count());
+        assertEquals(1L, postRepository.count());
     }
 
     @Test
     @DisplayName("글 첫 페이지 조회")
     void test3() {
 
-        List<Post> requestposts = IntStream.range(1,31)
-                .mapToObj(i->
-                    new Post().builder().title("foo" + i)
-                            .content("bar" + i)
-                            .build())
+        List<Post> requestposts = IntStream.range(1, 31)
+                .mapToObj(i ->
+                        new Post().builder().title("foo" + i)
+                                .content("bar" + i)
+                                .build())
                 .collect(Collectors.toList());
 
         postRepository.saveAll(requestposts);
@@ -100,5 +101,30 @@ class PostServiceTest {
 
         assertThat(postRepository.count()).isEqualTo(30L);
         assertThat(posts.get(0).getTitle()).isEqualTo("foo30");
+    }
+
+    @Test
+    @DisplayName("글 제목 수정")
+    void test4() {
+
+        Post post = Post.builder()
+                .title("인간실격")
+                .content("롯데캐슬")
+                .build();
+
+        postRepository.save(post);
+
+
+        PostEdit postEdit = PostEdit.builder()
+                .title("인간실격")
+                .build();
+
+        postService.edit(post.getId(), postEdit);
+
+
+        Post changedPost = postRepository.findById(post.getId())
+                .orElseThrow(() -> new RuntimeException("글이 존재하지 않습니다. " + post.getId()));
+        assertEquals("인간실격",changedPost.getTitle());
+
     }
 }
