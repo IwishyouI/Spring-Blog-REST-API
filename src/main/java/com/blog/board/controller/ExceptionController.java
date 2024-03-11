@@ -1,6 +1,7 @@
 package com.blog.board.controller;
 
 
+import com.blog.board.exception.PostNotFound;
 import com.blog.board.response.ErrorResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.FieldError;
@@ -26,9 +27,21 @@ public class ExceptionController {
 
         List<FieldError> fieldErrors = ex.getFieldErrors();
         for (FieldError fieldError : fieldErrors) {
-            error.addValidation(fieldError.getField(),fieldError.getDefaultMessage());
+            error.addValidation(fieldError.getField(), fieldError.getDefaultMessage());
         }
         return error;
     }
 
+
+    @ResponseBody
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(PostNotFound.class)
+    public ErrorResponse postNotFound(PostNotFound e) {
+        ErrorResponse response = ErrorResponse.builder()
+                .code("404")
+                .message("존재하지 않는 글입니다.")
+                .build();
+
+        return response;
+    }
 }

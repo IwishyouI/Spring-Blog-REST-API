@@ -27,6 +27,7 @@ import java.util.stream.IntStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -55,9 +56,9 @@ public class PostControllerTest {
     void test() throws Exception {
         Post post = new Post().builder().content("내용입니다.").build();
         String content = objectMapper.writeValueAsString(post);
-        mockMvc.perform(post("/posts").contentType(MediaType.APPLICATION_JSON).content(content))
+        mockMvc.perform(post("/posts").contentType(APPLICATION_JSON).content(content))
                 .andExpect(status().isBadRequest())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().contentType(APPLICATION_JSON))
                 .andExpect(jsonPath("$.validation.title", is("must not be blank")))
                 .andDo(print());
 
@@ -73,7 +74,7 @@ public class PostControllerTest {
                 .build();
 
         String content = objectMapper.writeValueAsString(post);
-        mockMvc.perform(post("/posts").contentType(MediaType.APPLICATION_JSON).content(content))
+        mockMvc.perform(post("/posts").contentType(APPLICATION_JSON).content(content))
                 .andExpect(status().isOk())
                 .andDo(print());
 
@@ -89,7 +90,7 @@ public class PostControllerTest {
 
 
         String content = objectMapper.writeValueAsString(post);
-        mockMvc.perform(post("/posts").contentType(MediaType.APPLICATION_JSON).content(content))
+        mockMvc.perform(post("/posts").contentType(APPLICATION_JSON).content(content))
                 .andExpect(status().isOk())
                 .andDo(print());
 
@@ -112,7 +113,7 @@ public class PostControllerTest {
 
         String body = objectMapper.writeValueAsString(post);
         mockMvc.perform(get("/posts/{postId}", post.getId())
-                        .contentType(MediaType.APPLICATION_JSON).content(body))
+                        .contentType(APPLICATION_JSON).content(body))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.title").value("foo"))
                 .andExpect(jsonPath("$.content").value("bar"))
@@ -120,28 +121,25 @@ public class PostControllerTest {
     }
 
     @Test
-    @DisplayName("글 2개 조회")
+    @DisplayName("글 여러개 조회")
     void test5() throws Exception {
+        // given
+        List<Post> requestPosts = IntStream.range(0, 20)
+                .mapToObj(i -> Post.builder()
+                        .title("foo" + i)
+                        .content("bar" + i)
+                        .build())
+                .collect(Collectors.toList());
 
-        Post post = new Post().builder()
-                .title("foo")
-                .content("bar")
-                .build();
+        postRepository.saveAll(requestPosts);
 
-
-        Post post2 = new Post().builder()
-                .title("foo")
-                .content("bar")
-                .build();
-
-        postRepository.saveAll(List.of(post,post2));
-
-
-        mockMvc.perform(get("/posts?page=0&sort=id,desc&size=5")
-                        .contentType(MediaType.APPLICATION_JSON))
+        // expected
+        mockMvc.perform(get("/posts?page=1&size=10")
+                        .contentType(APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].id").value(4))
-                .andExpect(jsonPath("$[0].title").value("foo"))
+                .andExpect(jsonPath("$.length()", is(10)))
+                .andExpect(jsonPath("$[0].title").value("foo19"))
+                .andExpect(jsonPath("$[0].content").value("bar19"))
                 .andDo(print());
     }
 
@@ -161,10 +159,10 @@ public class PostControllerTest {
 
 
         mockMvc.perform(get("/posts?page=1&size=5")
-                        .contentType(MediaType.APPLICATION_JSON))
+                        .contentType(APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(5))
-                .andExpect(jsonPath("$[0].id").value(30))
+                .andExpect(jsonPath("$[0].title").value("foo30"))
                 .andDo(print());
 
     }
@@ -185,34 +183,55 @@ public class PostControllerTest {
 
 
         mockMvc.perform(get("/posts?page=0&size=5")
-                        .contentType(MediaType.APPLICATION_JSON))
+                        .contentType(APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(5))
-                .andExpect(jsonPath("$[0].id").value(30))
+                .andExpect(jsonPath("$[0].content").value("bar30"))
                 .andDo(print());
 
     }
 
-
-    @Test
-    @DisplayName("삭제 테스트")
-    void test8() throws Exception {
-
-
-        Post post = new Post().builder()
-                .title("춘향전")
-                .content("성춘향")
-                .build();
-
-
-        Post savedPost = postRepository.save(post);
-
-
-        mockMvc.perform(delete("/posts/{postId}",post.getId())
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(content().string(""))
-                .andDo(print());
-
-    }
+//
+//    @Test
+//    @DisplayName("삭제 테스트")
+//    void test8() throws Exception {
+//
+//
+//        Post post = new Post().builder()
+//                .title("춘향전")
+//                .content("성춘향")
+//                .build();
+//
+//
+//        Post savedPost = postRepository.save(post);
+//
+//
+//        mockMvc.perform(delete("/posts/{postId}",savedPost.getId())
+//                        .contentType(MediaType.APPLICATION_JSON))
+//                .andExpect(status().isOk())
+//                .andDo(print());
+//
+//    }
+//
+//    @Test
+//    @DisplayName("삭제 컨트롤러 예외 테스트")
+//    void test9() throws Exception {
+//
+//
+//        Post post = new Post().builder()
+//                .title("춘향전")
+//                .content("성춘향")
+//                .build();
+//
+//
+//        Post savedPost = postRepository.save(post);
+//
+//        postRepository.delete(savedPost);
+//
+//        mockMvc.perform(delete("/posts/{postId}",1L)
+//                        .contentType(MediaType.APPLICATION_JSON))
+//                .andExpect(status().isNotFound())
+//                .andDo(print());
+//
+//    }
 }

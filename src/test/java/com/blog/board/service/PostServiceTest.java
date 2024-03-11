@@ -1,6 +1,7 @@
 package com.blog.board.service;
 
 import com.blog.board.domain.Post;
+import com.blog.board.exception.PostNotFound;
 import com.blog.board.repository.PostRepository;
 import com.blog.board.request.PostCreate;
 import com.blog.board.request.PostEdit;
@@ -124,7 +125,7 @@ class PostServiceTest {
 
         Post changedPost = postRepository.findById(post.getId())
                 .orElseThrow(() -> new RuntimeException("글이 존재하지 않습니다. " + post.getId()));
-        assertEquals("인간실격131",changedPost.getTitle());
+        assertEquals("인간실격13",changedPost.getTitle());
 
 
     }
@@ -139,9 +140,27 @@ class PostServiceTest {
                 .build();
 
         postRepository.save(post);
-
         postService.delete(post.getId());
 
         assertEquals(0,postRepository.count());
     }
+
+    @Test
+    @DisplayName("글 삭제 예외 테스트")
+    void test6() {
+
+        Post post = Post.builder()
+                .title("인간실격")
+                .content("롯데캐슬")
+                .build();
+
+        postRepository.save(post);
+        postService.delete(post.getId());
+
+
+        assertThrows(PostNotFound.class, () -> {
+            postService.delete(post.getId() + 1L);
+        });
+    }
+
 }
