@@ -27,8 +27,7 @@ import java.util.stream.IntStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -190,6 +189,29 @@ public class PostControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(5))
                 .andExpect(jsonPath("$[0].id").value(30))
+                .andDo(print());
+
+    }
+
+
+    @Test
+    @DisplayName("삭제 테스트")
+    void test8() throws Exception {
+
+
+        Post post = new Post().builder()
+                .title("춘향전")
+                .content("성춘향")
+                .build();
+
+
+        Post savedPost = postRepository.save(post);
+
+
+        mockMvc.perform(delete("/posts/{postId}",post.getId())
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().string(""))
                 .andDo(print());
 
     }

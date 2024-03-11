@@ -3,21 +3,14 @@ package com.blog.board.service;
 
 import com.blog.board.domain.Post;
 import com.blog.board.repository.PostRepository;
-import com.blog.board.repository.PostRepositoryCustom;
 import com.blog.board.request.PostCreate;
 import com.blog.board.request.PostEdit;
 import com.blog.board.request.PostSearch;
 import com.blog.board.response.PostResponse;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.query.Page;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -53,8 +46,15 @@ public class PostService  {
     public void edit(Long id, PostEdit postEdit) {
         Post post = postRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 글입니다."));
 
-        postEdit.change(post.getTitle(),post.getContent());
+        post.edit(postEdit.getTitle(),postEdit.getContent());
         postRepository.save(post);
+
+    }
+
+    public void delete(Long id) {
+        Post post = postRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 글입니다."));
+
+        postRepository.delete(post);
 
     }
 

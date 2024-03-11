@@ -116,7 +116,7 @@ class PostServiceTest {
 
 
         PostEdit postEdit = PostEdit.builder()
-                .title("인간실격")
+                .title("인간실격13")
                 .build();
 
         postService.edit(post.getId(), postEdit);
@@ -124,7 +124,24 @@ class PostServiceTest {
 
         Post changedPost = postRepository.findById(post.getId())
                 .orElseThrow(() -> new RuntimeException("글이 존재하지 않습니다. " + post.getId()));
-        assertEquals("인간실격",changedPost.getTitle());
+        assertEquals("인간실격131",changedPost.getTitle());
 
+
+    }
+
+    @Test
+    @DisplayName("글 삭제 테스트")
+    void test5() {
+
+        Post post = Post.builder()
+                .title("인간실격")
+                .content("롯데캐슬")
+                .build();
+
+        postRepository.save(post);
+
+        postService.delete(post.getId());
+
+        assertEquals(0,postRepository.count());
     }
 }

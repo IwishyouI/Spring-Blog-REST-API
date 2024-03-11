@@ -22,6 +22,11 @@ public class Post {
     public Post() {
     }
 
+    public void edit(String title, String content) {
+        this.title = title;
+        this.content = content;
+    }
+
     @Builder
     public Post(String title, String content) {
         this.title = title;
@@ -51,4 +56,6 @@ public class Post {
     public void setContent(String content) {
         this.content = content;
     }
+
+
 }
