@@ -3,6 +3,8 @@
 // noinspection TypeScriptCheckImport
 import {ref} from "vue";
 import axios from 'axios';
+import router from "@/router";
+import {useRouter} from "vue-router";
 
 const title = ref("");
 const content = ref("");
@@ -14,6 +16,9 @@ const write = function () {
             title: title.value,
             content: content.value
         })
+        .then(() => {
+            router.replace({name: "home"})
+        });
 }
 </script>
 
